@@ -12,10 +12,28 @@ function VideoUpload() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (videoFile) {
-      console.log("Uploading", videoFile.name);
+      const formData = new FormData();
+      formData.append('file_name', videoFile.name);
+      formData.append('video', videoFile);
+
+      try {
+        const response = await fetch(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/api/videos/`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Video uploaded successfully:', data);
+        } else {
+          throw new Error('Failed to upload video');
+        }
+      } catch (error) {
+        console.error('Error uploading video:', error);
+      }
     }
   };
 
