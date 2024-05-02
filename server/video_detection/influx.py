@@ -16,6 +16,7 @@ class InfluxDB():
 
   def query(self, query_string):
     query_api = self.client.query_api()
+    query_string = f'from(bucket: "{self.bucket}")'+ query_string
     return query_api.query(query_string, org=self.org)
   
   def write_bbox(self, videoId, object_class, x, y, w, h, confidence, time):
