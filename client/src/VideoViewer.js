@@ -4,11 +4,7 @@ function VideoViewer() {
   return (
     <div>
       <h1>Video Viewer</h1>
-      {/* Test video TODO add real viewer */}
-      <video width="720" controls>
-        <source src="test.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <iframe width={1000} height={600} src="https://app.rerun.io/version/0.14.1/?url=https://app.rerun.io/version/0.14.1/examples/arkit_scenes.rrd"></iframe>
     </div>
   );
 }
