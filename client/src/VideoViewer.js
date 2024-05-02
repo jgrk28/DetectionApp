@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function VideoViewer() {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState('');
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
     fetch(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/api/videos/`)
@@ -29,6 +30,9 @@ function VideoViewer() {
           'Content-Type': 'application/json',
         }
       })
+      .then(() => {
+        setKey(prevKey => prevKey + 1)
+      })
       .catch((error) => {
         console.error('Failed to display video:', error);
       })
@@ -48,6 +52,7 @@ function VideoViewer() {
       {selectedVideo && 
       <iframe 
         title="Rerun Web Viewer" 
+        key={key}
         width={1000} 
         height={600} 
         src={`http://${process.env.REACT_APP_RR_HOST}:${process.env.REACT_APP_RR_WEBPORT}/?url=ws://${process.env.REACT_APP_RR_HOST}:${process.env.REACT_APP_RR_WSPORT}`}
