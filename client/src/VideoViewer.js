@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function VideoViewer() {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState('');
+  const [loading, setLoading] = useState(false);
   const [key, setKey] = useState(0);
 
   useEffect(() => {
@@ -15,7 +16,7 @@ function VideoViewer() {
       })
       .then((data) => {
         setVideos(data);
-        setSelectedVideo(data[0]?.id);
+        setSelectedVideo(data.at(-1)?.id);
       })
       .catch((error) => {
         console.error('Failed to fetch videos:', error);
@@ -24,6 +25,7 @@ function VideoViewer() {
 
   useEffect(() => {
     if (selectedVideo) {
+      setLoading(true);
       fetch(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/api/videos/${selectedVideo}/display-video/`, {
         method: 'POST',
         headers: {
@@ -31,9 +33,11 @@ function VideoViewer() {
         }
       })
       .then(() => {
+        setLoading(false);
         setKey(prevKey => prevKey + 1)
       })
       .catch((error) => {
+        setLoading(false);
         console.error('Failed to display video:', error);
       })
     }
@@ -42,7 +46,7 @@ function VideoViewer() {
   return (
     <div>
       <h1>Video Viewer</h1>
-      <select onChange={(e) => setSelectedVideo(e.target.value)} value={selectedVideo}>
+      <select onChange={(e) => setSelectedVideo(e.target.value)} value={selectedVideo} disabled={loading}>
         {videos.map((video, index) => (
           <option key={index} value={video.id}>
             {video.file_name}
