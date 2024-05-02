@@ -15,5 +15,7 @@ def display_video(video):
             byte_string = cv2.imencode('.jpg', frame)[1].tostring()
             rerun_image = rr.ImageEncoded(contents=byte_string)
             rr.log("image", rerun_image)
+        else:
+            break
 
     return True

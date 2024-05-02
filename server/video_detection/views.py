@@ -39,6 +39,8 @@ class VideoViewSet(viewsets.ModelViewSet):
                     influx.write_torch_results(videoId, detections, model.model.names, time_elapsed)
                     time_elapsed += ns_per_frame
                     print(detections)
+                else:
+                    break
         return response
     
     # Add a custom endpoint to videos REST API to display the video using rerun
