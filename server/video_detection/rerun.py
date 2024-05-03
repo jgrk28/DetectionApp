@@ -56,13 +56,18 @@ def display_video(video):
             rerun_image = rr.ImageEncoded(contents=byte_string)
             rr.log("image", rerun_image)
 
+            # Each box needs a unique name
+            prediction_number = 0
+            
             # Loop through all tables simultaniously as they have same number of records
             for (x_record, y_record, w_record, h_record) in zip(x_data[frame_count], y_data[frame_count], width_data[frame_count], height_data[frame_count]):
                 x = x_record.get_value()
                 y = y_record.get_value()
                 w = w_record.get_value()
                 h = h_record.get_value()
-                rr.log("box", rr.Boxes2D(centers=[x, y], sizes=[w, h]))
+                print(x_record)
+                rr.log(f"box{prediction_number}", rr.Boxes2D(centers=[x, y], sizes=[w, h]))
+                prediction_number += 1
             frame_count += 1
         else:
             break

@@ -19,10 +19,11 @@ class InfluxDB():
     query_string = f'from(bucket: "{self.bucket}")'+ query_string
     return query_api.query(query_string, org=self.org)
   
-  def write_bbox(self, videoId, object_class, x, y, w, h, confidence, time):
+  def write_bbox(self, video_id, prediction_number, object_class, x, y, w, h, confidence, time):
     point = (
       Point("bbox")
-      .tag("videoId", videoId)
+      .tag("videoId", video_id)
+      .tag("predNum", prediction_number)
       .tag("class", object_class)
       .field("x", x)
       .field("y", y)
@@ -36,9 +37,10 @@ class InfluxDB():
   def write_torch_results(self, videoId, results, class_names, time):
       # Predictions for the first (and only) given image in x, y, width, height format
       # Predictions take the form of [x, y, w, h, confidence, classId]
-      for prediction in results.xywh[0]:
+      for index, prediction in enumerate(results.xywh[0]):
         self.write_bbox(
           videoId, 
+          index,
           class_names[int(prediction[5])], 
           int(prediction[0]), 
           int(prediction[1]), 
