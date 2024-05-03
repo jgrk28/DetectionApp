@@ -46,11 +46,13 @@ function VideoUpload() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="page-container">
+      <h1 className="page-title">Video Upload</h1>
+      <form className="form-container" onSubmit={handleSubmit}>
         <input type="file" accept="video/*" onChange={handleVideoChange} disabled={uploading} />
         <button type="submit" disabled={uploading}>Upload Video</button>
       </form>
+      <button className="nav-button" onClick={() => navigate('/view')} disabled={uploading}>View old uploads</button>
     </div>
   );
 }
