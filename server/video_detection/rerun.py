@@ -48,6 +48,20 @@ def display_video(video):
         |> filter(fn: (r) => r._field == "height")
         |> group(columns: ["_time"])
     """)
+    class_data = influx.query(f"""
+        |> range(start: 0)
+        |> filter(fn: (r) => r._measurement == "bbox")
+        |> filter(fn: (r) => r.videoId == "{video.id}")
+        |> filter(fn: (r) => r._field == "class")
+        |> group(columns: ["_time"])
+    """)
+    conf_data = influx.query(f"""
+        |> range(start: 0)
+        |> filter(fn: (r) => r._measurement == "bbox")
+        |> filter(fn: (r) => r.videoId == "{video.id}")
+        |> filter(fn: (r) => r._field == "confidence")
+        |> group(columns: ["_time"])
+    """)
 
     frame_count = 0
 
@@ -65,12 +79,16 @@ def display_video(video):
             prediction_number = 0
             
             # Loop through all tables simultaniously as they have same number of records
-            for (x_record, y_record, w_record, h_record) in zip(x_data[frame_count], y_data[frame_count], width_data[frame_count], height_data[frame_count]):
+            for (x_record, y_record, w_record, h_record, class_record, conf_record) in zip(x_data[frame_count], y_data[frame_count], width_data[frame_count], height_data[frame_count], class_data[frame_count], conf_data[frame_count]):
                 x = x_record.get_value()
                 y = y_record.get_value()
                 w = w_record.get_value()
                 h = h_record.get_value()
-                rr.log(f"box{prediction_number}", rr.Boxes2D(centers=[x, y], sizes=[w, h]))
+                # Display class and confidence information in label
+                c = class_record.get_value()
+                conf = conf_record.get_value()
+                label = c + f" {conf:.2f}"
+                rr.log(f"box{prediction_number}", rr.Boxes2D(centers=[x, y], sizes=[w, h], labels=label))
                 prediction_number += 1
             frame_count += 1
         else:

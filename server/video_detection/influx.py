@@ -24,7 +24,7 @@ class InfluxDB():
       Point("bbox")
       .tag("videoId", video_id)
       .tag("predNum", prediction_number)
-      .tag("class", object_class)
+      .field("class", object_class)
       .field("x", x)
       .field("y", y)
       .field("width", w)
