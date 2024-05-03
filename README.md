@@ -43,3 +43,9 @@ I could not get the React [package](https://www.npmjs.com/package/@rerun-io/web-
 While InfluxDB is good at handling time series data it is not meant to store large binary data blobs like video files. I decided to use Django for it's quick REST API setup and integrated data storage. Django would let me easily expand the backend to have more functionalily in the future.
 
 Currently I am just saving the video files locally on the server but if this app were to scale I would definitely want to set up a cloud storage service like s3 to store the video files.
+
+## Further Work
+
+While I made the login and signup pages with their respective API calls, I did not have time to finish the authentication implementation. The next steps would be getting django to send a session cookie to the frontend when a user signs up or logs in. This cookie would be used to authenticate subsequent API calls so that only users can access the video APIs. I would use PermissionClasses on the backend to restrict which views needed a session cookie. On the frontend, I would also add a state (using createContext) authentication that restrict access to to "/" and "/view" urls. Anytime those views are accessed without a cookie, the user would be redirected to the login page.
+
+I could also add a progress bar when the video is being processed. This would require a websocket to send information from the backend to the frontend as the video is being processed.
