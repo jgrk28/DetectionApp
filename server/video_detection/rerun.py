@@ -13,6 +13,9 @@ def display_video(video):
     print(f"Displaying rerun for: {video.video.path}")
     cvVideo = cv2.VideoCapture(video.video.path)
 
+    fps = cvVideo.get(cv2.CAP_PROP_FPS)
+    ns_per_frame = int(1_000_000_000 / fps)
+
     # Query each field seperately so that we can assign them without checking the field
     # Query and group by time which will give one table per frame
     # alternative would be to call a query each frame to get the boxes at that time but would require many more database hits
@@ -52,6 +55,8 @@ def display_video(video):
     while cvVideo.isOpened():
         ret, frame = cvVideo.read()
         if ret:
+            rr.set_time_nanos("timestamp", frame_count*ns_per_frame)
+
             byte_string = cv2.imencode('.jpg', frame)[1].tostring()
             rerun_image = rr.ImageEncoded(contents=byte_string)
             rr.log("image", rerun_image)
@@ -65,7 +70,6 @@ def display_video(video):
                 y = y_record.get_value()
                 w = w_record.get_value()
                 h = h_record.get_value()
-                print(x_record)
                 rr.log(f"box{prediction_number}", rr.Boxes2D(centers=[x, y], sizes=[w, h]))
                 prediction_number += 1
             frame_count += 1
